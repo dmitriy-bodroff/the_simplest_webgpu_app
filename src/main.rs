@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use wgpu::util::DeviceExt;
 
 fn main() {
@@ -7,8 +9,7 @@ fn main() {
 
     let window = create_window(&event_loop);
 
-    // TODO: Ошибка E0515, неясно как вернуть значение из функции
-    let surface = wgpu.create_surface(&window).unwrap();
+    let surface = create_surface(&wgpu, &window);
 
     let adapter = create_adapter(&wgpu, &surface);
 
@@ -63,6 +64,10 @@ fn create_event_loop() -> winit::event_loop::EventLoop<()> {
 
 fn create_window(event_loop: &winit::event_loop::EventLoop<()>) -> winit::window::Window {
     winit::window::Window::new(&event_loop).unwrap()
+}
+
+fn create_surface<'window>(wgpu: &wgpu::Instance, window: &'window winit::window::Window) -> Rc<wgpu::Surface<'window>> {
+    Rc::new(wgpu.create_surface(window).unwrap())
 }
 
 fn create_adapter(wgpu: &wgpu::Instance, surface: &wgpu::Surface) -> wgpu::Adapter {
